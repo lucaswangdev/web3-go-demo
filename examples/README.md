@@ -134,6 +134,28 @@ go run examples/07_nonce_management.go
 
 ---
 
+#### [08_local_testing.go](08_local_testing.go)
+**本地区块链测试**
+
+学习内容：
+- 连接本地测试节点（Anvil/Hardhat/Ganache）
+- 使用测试账户
+- 发送本地测试交易
+- 监听本地区块
+- 快速开发和调试
+
+适合：本地开发、快速测试、学习实验
+
+```bash
+# 先启动本地节点
+anvil
+
+# 运行示例
+go run examples/08_local_testing.go
+```
+
+---
+
 ## 🎯 学习路径
 
 ### 第一周：基础（阶段二）
@@ -148,7 +170,8 @@ go run examples/07_nonce_management.go
 
 ### 第三周：生产级
 7. ⭐ [`07_nonce_management.go`](07_nonce_management.go) - Nonce 管理
-8. 🚀 开始实战项目（参考 [`../cmd/tracker/main.go`](../cmd/tracker/main.go)）
+8. 🚀 [`08_local_testing.go`](08_local_testing.go) - 本地测试
+9. 🚀 开始实战项目（参考 [`../cmd/tracker/main.go`](../cmd/tracker/main.go)）
 
 ---
 
@@ -249,6 +272,7 @@ go run examples/01_basic_connection.go
 | 05 | ⭐⭐⭐ | 15分钟 | 主网/测试网 | ❌ | 免费 |
 | 06 | ⭐⭐ | 10分钟 | 主网/测试网 | ❌ | 免费 |
 | 07 | ⭐⭐⭐⭐ | 20分钟 | 测试网 | ❌ | 免费 |
+| 08 | ⭐ | 5分钟 | 本地 | ❌ | 免费 |
 
 ---
 

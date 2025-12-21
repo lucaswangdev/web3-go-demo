@@ -12,6 +12,7 @@ type Config struct {
 	EthereumWSRPC      string
 	ContractAddress    string
 	StartBlock         uint64
+	NetworkType        string // mainnet, testnet, local
 	
 	// 数据库配置
 	DBHost     string
@@ -29,10 +30,10 @@ type Config struct {
 
 // LoadConfig 从环境变量加载配置
 func LoadConfig() *Config {
-	return &Config{
-		// Ethereum 配置
-		EthereumRPC:     getEnv("ETHEREUM_RPC", "https://mainnet.infura.io/v3/YOUR_API_KEY"),
-		EthereumWSRPC:   getEnv("ETHEREUM_WS_RPC", "wss://mainnet.infura.io/ws/v3/YOUR_API_KEY"),
+	networkType := getEnv("NETWORK_TYPE", "mainnet")
+	
+	config := &Config{
+		NetworkType:     networkType,
 		ContractAddress: getEnv("CONTRACT_ADDRESS", "0xdAC17F958D2ee523a2206206994597C13D831ec7"), // USDT 默认
 		StartBlock:      0,
 		
@@ -49,6 +50,21 @@ func LoadConfig() *Config {
 		// 日志配置
 		LogLevel:   getEnv("LOG_LEVEL", "info"),
 	}
+	
+	// 根据网络类型设置 RPC 端点
+	switch networkType {
+	case "local":
+		config.EthereumRPC = getEnv("ETHEREUM_RPC", "http://127.0.0.1:8545")
+		config.EthereumWSRPC = getEnv("ETHEREUM_WS_RPC", "ws://127.0.0.1:8545")
+	case "testnet":
+		config.EthereumRPC = getEnv("ETHEREUM_RPC", "https://sepolia.infura.io/v3/YOUR_API_KEY")
+		config.EthereumWSRPC = getEnv("ETHEREUM_WS_RPC", "wss://sepolia.infura.io/ws/v3/YOUR_API_KEY")
+	default: // mainnet
+		config.EthereumRPC = getEnv("ETHEREUM_RPC", "https://mainnet.infura.io/v3/YOUR_API_KEY")
+		config.EthereumWSRPC = getEnv("ETHEREUM_WS_RPC", "wss://mainnet.infura.io/ws/v3/YOUR_API_KEY")
+	}
+	
+	return config
 }
 
 // GetDSN 返回 PostgreSQL 连接字符串
