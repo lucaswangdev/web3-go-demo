@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"math/big"
 )
 
 // JSON-RPC 请求结构
@@ -43,6 +44,39 @@ func main () {
 		return
 	}
 	fmt.Printf("Chain ID: %s (十进制: %d)\n", chainID, hexToDecimal(chainID))
+
+	address1 := "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"
+	currentAmount, err := getBalance(rpcURL, address1)
+	if err != nil {
+		log.Printf("查询余额失败：%v", err)
+	}
+
+	// 转换为ETH
+	ethBalance := weiToEth(currentAmount)
+	// fmt.Printf("账户 %d (%s): %s ETH\n", i, address, ethBalance)
+
+  fmt.Printf("当前地址余额为：%v, %v", address1, ethBalance)
+
+}
+
+// Wei转ETH
+func weiToEth(weiHex string) string {
+	// 移除0x前缀
+	if len(weiHex) > 2 && weiHex[:2] == "0x" {
+		weiHex = weiHex[2:]
+	}
+	
+	// 转换为big.Int
+	wei := new(big.Int)
+	wei.SetString(weiHex, 16)
+	
+	// 1 ETH = 10^18 Wei
+	ethDivisor := new(big.Int).Exp(big.NewInt(10), big.NewInt(18), nil)
+	
+	// 转换为ETH
+	eth := new(big.Float).Quo(new(big.Float).SetInt(wei), new(big.Float).SetInt(ethDivisor))
+	
+	return eth.Text('f', 6) // 保留6位小数
 }
 
 // 发送JSON-RPC请求
@@ -106,4 +140,15 @@ func hexToDecimal(hexStr string) int64 {
 	}
 	
 	return decimal
+}
+
+// 获取账户余额
+func getBalance(rpcURL, address string) (string, error) {
+	params := []interface{}{address, "latest"}
+	resp, err := sendJSONRPCRequest(rpcURL, "eth_getBalance", params)
+	if err != nil {
+		return "", err
+	}
+	
+	return resp.Result.(string), nil
 }

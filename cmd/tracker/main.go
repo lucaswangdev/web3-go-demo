@@ -9,14 +9,23 @@ import (
 	"web3-go-demo/config"
 	"web3-go-demo/db"
 	"web3-go-demo/listener"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
 	log.Println("🚀 启动 ERC20 代币余额追踪服务...")
 
+	// 加载 .env 文件
+	if err := godotenv.Load(); err != nil {
+		log.Printf("⚠️  无法加载 .env 文件: %v (将使用环境变量或默认值)", err)
+	} else {
+		log.Println("✅ .env 文件加载成功")
+	}
+
 	// 加载配置
 	cfg := config.LoadConfig()
-	log.Printf("配置加载完成: Contract=%s", cfg.ContractAddress)
+	log.Printf("配置加载完成: Contract=%s, Network=%s", cfg.ContractAddress, cfg.NetworkType)
 
 	// 连接数据库
 	database, err := db.NewDatabase(cfg.GetDSN())
